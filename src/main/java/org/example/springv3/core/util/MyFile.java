@@ -1,6 +1,6 @@
 package org.example.springv3.core.util;
 
-import org.example.springv3.core.error.ex.Exception500;
+import org.example.springv3.core.error.ex.ExceptionApi500;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
@@ -18,7 +18,7 @@ public class MyFile {
         try {
             Files.write(imageFilePath, file.getBytes());
         } catch (Exception e) {
-            throw new Exception500("파일 저장 오류");
+            throw new ExceptionApi500("파일 저장 오류");
         }
         return fileName;
     }

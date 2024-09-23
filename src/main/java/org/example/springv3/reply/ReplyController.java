@@ -2,8 +2,6 @@ package org.example.springv3.reply;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.example.springv3.core.error.ex.Exception403;
-import org.example.springv3.core.error.ex.ExceptionApi403;
 import org.example.springv3.core.util.Resp;
 import org.example.springv3.user.User;
 import org.springframework.http.ResponseEntity;

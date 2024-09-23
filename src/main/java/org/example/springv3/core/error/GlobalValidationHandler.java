@@ -3,7 +3,7 @@ package org.example.springv3.core.error;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.example.springv3.core.error.ex.Exception400;
+import org.example.springv3.core.error.ex.ExceptionApi400;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -21,7 +21,7 @@ public class GlobalValidationHandler {
 
                 if (errors.hasErrors()) {
                     for (FieldError error : errors.getFieldErrors()) {
-                        throw new Exception400(error.getDefaultMessage() + " : " + error.getField());
+                        throw new ExceptionApi400(error.getDefaultMessage() + " : " + error.getField());
                     }
                 }
             }
