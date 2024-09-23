@@ -8,6 +8,27 @@ import org.example.springv3.user.User;
 import java.util.Date;
 
 public class JwtUtil {
+
+    public static String createSecret(User user){
+        String accessToken = JWT.create()
+                .withSubject("바보")
+                .withExpiresAt(new Date(System.currentTimeMillis() + 1000))
+                .withClaim("id", user.getId()) // payload
+                .withClaim("username", user.getUsername())
+                .sign(Algorithm.HMAC512("meta"));
+        return accessToken;
+    }
+
+    public static String createExp(User user){
+        String accessToken = JWT.create()
+                .withSubject("바보")
+                .withExpiresAt(new Date(System.currentTimeMillis() + 1000))
+                .withClaim("id", user.getId()) // payload
+                .withClaim("username", user.getUsername())
+                .sign(Algorithm.HMAC512("metacoding"));
+        return accessToken;
+    }
+
     public static String create(User user){
         String accessToken = JWT.create()
                 .withSubject("바보")
@@ -19,6 +40,7 @@ public class JwtUtil {
     }
 
     public static User verify(String jwt){
+        jwt = jwt.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512("metacoding")).build().verify(jwt);
         int id = decodedJWT.getClaim("id").asInt();
         String username = decodedJWT.getClaim("username").asString();
