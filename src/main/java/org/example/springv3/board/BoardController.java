@@ -29,22 +29,19 @@ public class BoardController {
 
     // localhost:8080?title=제목
     @GetMapping("/")
-    public String list(
+    public ResponseEntity<?> list(
             @RequestParam(name = "title", required = false) String title,
-            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-            HttpServletRequest request) {
-
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page) {
         BoardResponse.PageDTO pageDTO = boardService.게시글목록보기(title, page);
-        request.setAttribute("model", pageDTO);
-        return "board/list";
+        return ResponseEntity.ok(pageDTO);
     }
 
 
     @DeleteMapping("/api/board/{id}")
-    public String removeBoard(@PathVariable("id") Integer id, HttpServletRequest request) {
+    public ResponseEntity<?> removeBoard(@PathVariable("id") Integer id, HttpServletRequest request) {
         User sessionUser = (User) session.getAttribute("sessionUser");
         boardService.게시글삭제하기(id, sessionUser);
-        return "redirect:/";
+        return ResponseEntity.ok(null);
     }
 
 
@@ -55,20 +52,18 @@ public class BoardController {
         return ResponseEntity.ok(Resp.ok(model));
     }
 
-    @PostMapping("/api/board/{id}/update")
-    public String update(@PathVariable("id") int id, @Valid BoardRequest.UpdateDTO updateDTO, Errors errors) {
+    // 수정이니까 PutMapping으로 하고 주소에 update 동사 삭제
+    @PutMapping("/api/board/{id}")
+    public ResponseEntity<?> update(@PathVariable("id") int id, @Valid BoardRequest.UpdateDTO updateDTO, Errors errors) {
         User sessionUser = (User) session.getAttribute("sessionUser");
-        boardService.게시글수정(id, updateDTO, sessionUser);
-        return "redirect:/board/" + id;
+        BoardResponse.DTO model = boardService.게시글수정(id, updateDTO, sessionUser);
+        return ResponseEntity.ok(Resp.ok(model));
     }
 
     @GetMapping("/board/{id}")
-    public String detail(@PathVariable("id") Integer id, HttpServletRequest request) {
+    public ResponseEntity<?> detail(@PathVariable("id") Integer id) {
         User sessionUser = (User) session.getAttribute("sessionUser");
-
         BoardResponse.DetailDTO model = boardService.게시글상세보기(sessionUser, id);
-        request.setAttribute("model", model);
-
-        return "board/detail";
+        return ResponseEntity.ok(Resp.ok(model));
     }
 }

@@ -17,20 +17,20 @@ public class UserController {
     private final HttpSession session;
     private final UserService userService;
 
-    @PostMapping("/api/user/profile")
-    public String profile(@RequestParam("profile") MultipartFile profile){
+    // 업데이트 하는 거니까!!
+    @PutMapping("/api/user/profile")
+    public ResponseEntity<?> profile(@RequestParam("profile") MultipartFile profile){
         User sessionUser = (User) session.getAttribute("sessionUser");
-        userService.프로필업로드(profile, sessionUser);
-
-        return "redirect:/api/user/profile-form";
+        UserResponse.DTO model = userService.프로필업로드(profile, sessionUser);
+        return ResponseEntity.ok(Resp.ok(model));
     }
 
-    @GetMapping("/api/user/profile-form")
-    public String profileForm(HttpServletRequest request) {
+    // profile-form 에서 form 삭제!! 화면을 가져오는게 아니니까!!
+    @GetMapping("/api/user/profile")
+    public ResponseEntity<?> profileForm() {
         User sessionUser = (User) session.getAttribute("sessionUser");
-        String profile = userService.프로필사진가져오기(sessionUser);
-        request.setAttribute("profile", profile);
-        return "user/profile-form";
+        String model = userService.프로필사진가져오기(sessionUser);
+        return ResponseEntity.ok(Resp.ok(model));
     }
 
     // http://localhost:8080/user/samecheck?username=hello
@@ -38,12 +38,6 @@ public class UserController {
     public ResponseEntity<?> sameCheck(@RequestParam("username") String username) {
         boolean isSameUsername = userService.유저네임중복되었니(username);
         return ResponseEntity.ok(Resp.ok(isSameUsername, isSameUsername ? "중복되었어요" : "중복되지않았어요"));
-    }
-
-    @GetMapping("/logout")
-    public String logout() {
-        session.invalidate();
-        return "redirect:/";
     }
 
     @PostMapping("/login")
@@ -55,18 +49,9 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public String join(@Valid UserRequest.JoinDTO joinDTO, Errors errors) {
-        userService.회원가입(joinDTO);
-        return "redirect:/login-form";
+    public ResponseEntity<?> join(@Valid UserRequest.JoinDTO joinDTO, Errors errors) {
+        UserResponse.DTO model = userService.회원가입(joinDTO);
+        return ResponseEntity.ok(Resp.ok(model));
     }
 
-    @GetMapping("/join-form")
-    public String joinForm() {
-        return "user/join-form";
-    }
-
-    @GetMapping("/login-form")
-    public String loginForm() {
-        return "user/login-form";
-    }
 }

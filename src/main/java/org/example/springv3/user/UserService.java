@@ -27,13 +27,14 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void 프로필업로드(MultipartFile profile, User sessionUser){
+    public UserResponse.DTO 프로필업로드(MultipartFile profile, User sessionUser){
         String imageFileName = MyFile.파일저장(profile);
 
         // DB에 저장
         User userPS = userRepository.findById(sessionUser.getId())
                 .orElseThrow(() -> new Exception404("유저를 찾을 수 없어요"));
         userPS.setProfile(imageFileName);
+        return new UserResponse.DTO(userPS);
     } // 더티체킹 update됨
 
     public String 로그인(UserRequest.LoginDTO loginDTO) {
@@ -48,12 +49,13 @@ public class UserService {
     }
 
     @Transactional
-    public void 회원가입(UserRequest.JoinDTO joinDTO) {
+    public UserResponse.DTO 회원가입(UserRequest.JoinDTO joinDTO) {
         Optional<User> userOP= userRepository.findByUsername(joinDTO.getUsername());
         if(userOP.isPresent()) {
             throw new Exception400("이미 존재하는 유저입니다.");
         }
-        userRepository.save(joinDTO.toEntity());
+        User userPS = userRepository.save(joinDTO.toEntity());
+        return new UserResponse.DTO(userPS);
     }
 
     public boolean 유저네임중복되었니(String username) {
